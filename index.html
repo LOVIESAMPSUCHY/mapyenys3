@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BYCIEPLYPAPIEZDRUGZ – Zaawansowane Mapy</title>
+  <title>BYCIEPLYPAPIEZDRUGZ </title>
   <style>
     :root {
       --spacing: 16px;
@@ -50,17 +50,21 @@
     .container { display: flex; flex-wrap: nowrap; padding: var(--spacing); gap: var(--spacing); }
     nav { flex: 0 0 220px; background: rgba(0,0,0,0.35); border-radius: 8px; padding: var(--spacing); height: calc(100vh - 2*var(--spacing) - 120px); overflow-y: auto; }
     nav h2 { margin-top: 0; font-size: 1.2rem; }
-    nav input[type="search"] { width: 100%; padding: 6px; margin-bottom: var(--spacing); border-radius: 4px; border: none; }
-    nav .legend { margin-top: var(--spacing); }
-    nav .legend h3 { margin-bottom: 8px; font-size: 1rem; }
-    nav .legend ul { list-style: none; padding: 0; margin: 0; }
-    nav .legend li { display: flex; align-items: center; margin-bottom: 6px; }
-    nav .legend span.icon { display: inline-block; width: 12px; height: 12px; margin-right: 8px; border-radius: 2px; }
-    nav ul#map-list { list-style: none; padding: 0; margin: 0; }
+    nav input[type="search"], nav input[type="text"] { width: 100%; padding: 6px; margin-bottom: var(--spacing); border-radius: 4px; border: none; }
+    .legend { margin-top: var(--spacing); }
+    .legend h3 { margin-bottom: 8px; font-size: 1rem; }
+    .legend ul { list-style: none; padding: 0; margin: 0; }
+    .legend li { display: flex; align-items: center; margin-bottom: 6px; }
+    .legend span.icon { display: inline-block; width: 12px; height: 12px; margin-right: 8px; border-radius: 2px; }
+    ul#map-list, ul#todo-list { list-style: none; padding: 0; margin: 0; }
     nav li { margin: 4px 0; }
     nav button.tab { width: 100%; text-align: left; border: 2px solid var(--d-tab1); padding: 8px; border-radius: 4px; background: none; color: inherit; transition: all var(--transition-fast); }
     body.theme-extreme nav button.tab { border-color: var(--e-tab1); background: linear-gradient(45deg, var(--e-tab1), var(--e-tab2)); color: #000; }
     nav button.tab.active { background: rgba(255,255,255,0.2); }
+    .todo-section { margin-top: var(--spacing); background: rgba(255,255,255,0.1); padding: var(--spacing); border-radius: 8px; }
+    .todo-section h3 { margin: 0 0 8px 0; font-size: 1rem; }
+    .todo-item { display: flex; align-items: center; margin-bottom: 6px; }
+    .todo-item.completed label { text-decoration: line-through; opacity: 0.6; }
     main { flex: 1; overflow: auto; }
     .toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing); }
     .toolbar input#zoom-slider { width: 200px; }
@@ -103,6 +107,11 @@
           <li><span class="icon" style="background:#f00;"></span>Respawn: &lt;10m</li>
         </ul>
       </div>
+      <div class="todo-section">
+        <h3>TO DO </h3>
+        <input type="text" id="todo-input" placeholder="Dodaj nowe zadanie…">
+        <ul id="todo-list"></ul>
+      </div>
     </nav>
     <main>
       <div class="toolbar">
@@ -140,6 +149,7 @@
   </div>
   <footer><p>© 2025 CIEPLYPAPIEZ DRUGZ TU NIE MA PRAW TU JEST JAZDA</p></footer>
   <script>
+    // Obsługa kart map
     const tabs = document.querySelectorAll('nav button.tab');
     const maps = document.querySelectorAll('.map-container');
     const mapTitle = document.getElementById('map-title');
@@ -163,10 +173,12 @@
         tab.parentElement.style.display = text.includes(term) ? '' : 'none';
       });
     });
+    // Tryb ekstremalny
     const toggle = document.getElementById('mode-toggle');
     toggle.addEventListener('click', () => {
       document.body.classList.toggle('theme-extreme');
     });
+    // Zoom mapy
     zoomSlider.addEventListener('input', e => {
       const scale = e.target.value;
       const activeMap = document.querySelector('.map-container.active .map-image');
@@ -176,6 +188,54 @@
       const img = document.querySelector(`#${id} .map-image`);
       if (img) img.style.transform = 'scale(1)';
     }
+
+    // TO DO - przechowywanie w localStorage i synchronizacja w czasie rzeczywistym
+    const todoInput = document.getElementById('todo-input');
+    const todoList = document.getElementById('todo-list');
+
+    let todos = [];
+
+    function loadTodos() {
+      const stored = localStorage.getItem('todos');
+      todos = stored ? JSON.parse(stored) : [];
+    }
+
+    function saveTodos() {
+      localStorage.setItem('todos', JSON.stringify(todos));
+    }
+
+    function renderTodos() {
+      todoList.innerHTML = '';
+      todos.forEach((task, index) => {
+        const li = document.createElement('li');
+        li.className = 'todo-item' + (task.completed ? ' completed' : '');
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.checked = task.completed;
+        checkbox.addEventListener('change', () => {
+          todos[index].completed = checkbox.checked;
+          saveTodos();
+          renderTodos();
+        });
+        const label = document.createElement('label');
+        label.textContent = task.text;
+        li.append(checkbox, label);
+        todoList.append(li);
+      });
+    }
+
+    todoInput.addEventListener('keypress', e => {
+      if (e.key === 'Enter' && todoInput.value.trim()) {
+        todos.push({ text: todoInput.value.trim(), completed: false });
+        todoInput.value = ''; loadTodos(); saveTodos(); renderTodos();
+      }
+    });
+
+    window.addEventListener('storage', e => {
+      if (e.key === 'todos') { loadTodos(); renderTodos(); }
+    });
+
+    loadTodos(); renderTodos();
   </script>
 </body>
 </html>
