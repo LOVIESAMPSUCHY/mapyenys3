@@ -3,34 +3,46 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mapy Punktów - Stymulujące barwy</title>
+  <title>PIETRUCHADRUGZ</title>
   <style>
     :root {
       --spacing: 16px;
-      --bg1: #ff0044;
-      --bg2: #00ff66;
-      --bg3: #0044ff;
-      --bg4: #ffaa00;
-      --tab1: #00ffff;
-      --tab2: #ff00ff;
-      --info1: #ffff00;
-      --info2: #ff0000;
+      /* Domyślne kolory (ciemny fiolet gradient) */
+      --d-bg1: #2e003e;
+      --d-bg2: #5e006f;
+      --d-tab1: #8a2be2;
+      --d-tab2: #4b0082;
+      --d-info1: #3d0050;
+      --d-info2: #1a001f;
+      /* Ekstremalne, stymulujące kolory */
+      --e-bg1: #ff0055;
+      --e-bg2: #00ff11;
+      --e-bg3: #11ddff;
+      --e-bg4: #ffee00;
+      --e-tab1: #ff00ff;
+      --e-tab2: #00ffff;
+      --e-info1: #00ff99;
+      --e-info2: #ff9900;
     }
     *, *::before, *::after { box-sizing: border-box; }
     body {
       margin: 0;
       font-family: 'Comic Sans MS', cursive, sans-serif;
-      background: radial-gradient(circle at center, var(--bg1), var(--bg2), var(--bg3), var(--bg4));
-      animation: swirl 10s alternate-reverse infinite;
+      background: linear-gradient(135deg, var(--d-bg1), var(--d-bg2));
+      color: #fff;
+      transition: background 0.5s ease;
+    }
+    body.theme-extreme {
+      background: radial-gradient(circle at center, var(--e-bg1), var(--e-bg2), var(--e-bg3), var(--e-bg4));
+      animation: swirl 8s linear infinite;
       color: #000;
     }
     @keyframes swirl {
-      0% { background-position: 0% 0%; filter: hue-rotate(0deg); }
-      100% { background-position: 100% 100%; filter: hue-rotate(180deg); }
+      0% { filter: hue-rotate(0deg); }
+      50% { filter: hue-rotate(180deg); }
+      100% { filter: hue-rotate(360deg); }
     }
-    .container {
-      padding: var(--spacing);
-    }
+    .container { padding: var(--spacing); }
     nav.tabs {
       display: flex;
       gap: var(--spacing);
@@ -39,65 +51,49 @@
     }
     .tab {
       padding: 12px 24px;
-      border: 3px solid var(--tab1);
-      border-radius: 40px;
-      background: linear-gradient(45deg, var(--tab1), var(--tab2));
-      color: #000;
+      border: 3px solid;
+      border-radius: 30px;
+      background: linear-gradient(45deg, var(--d-tab1), var(--d-tab2));
+      color: #fff;
       font-weight: bold;
-      text-shadow: 0 0 5px #fff;
       cursor: pointer;
-      transition: transform .2s ease, box-shadow .2s ease;
+      transition: all .3s ease;
     }
-    .tab:hover {
-      transform: scale(1.15);
-      box-shadow: 0 0 20px var(--tab1), 0 0 20px var(--tab2);
-    }
-    .tab.active {
-      background: linear-gradient(45deg, var(--tab2), var(--tab1));
-      box-shadow: 0 0 30px var(--tab2), 0 0 30px var(--tab1);
-      transform: scale(1.2);
-    }
-    .map-container {
-      display: none;
-    }
-    .map-container.active {
-      display: grid;
-      grid-template-columns: 1fr 250px;
-      gap: var(--spacing);
-      align-items: start;
-    }
-    @media (max-width: 768px) {
-      .map-container.active { grid-template-columns: 1fr; }
-    }
-    .map {
-      width: 70%;
-      height: auto; /* usunięcie aspect-ratio */
-      margin: 0 auto;
-      border: 8px dashed #fff;
-      border-radius: 20px;
-      overflow: hidden;
-      box-shadow: inset 0 0 40px rgba(255,255,255,0.7);
-      background: #000;
-    }
-    .map-image {
-      width: 100%;
-      height: auto; /* umożliwia widoczność obrazu */
-      display: block;
-      filter: brightness(1.3) saturate(2);
-    }
-    .info {
-      background: linear-gradient(135deg, var(--info1), var(--info2));
-      padding: var(--spacing);
-      border-radius: 20px;
-      box-shadow: 0 0 25px rgba(0,0,0,0.6);
+    .tab.active { box-shadow: 0 0 10px rgba(0,0,0,0.5); }
+    body.theme-extreme .tab {
+      background: linear-gradient(45deg, var(--e-tab1), var(--e-tab2));
+      border-color: var(--e-tab1);
       color: #000;
+      text-shadow: 0 0 5px #fff;
     }
-    .info h2 { margin-top: 0; font-size: 1.5rem; text-shadow: 1px 1px 2px #fff; }
-    .info ul { list-style: disc inside; padding: 0; margin: 0; }
-    .info li { margin-bottom: .75rem; }
+    button#mode-toggle {
+      position: fixed;
+      top: var(--spacing);
+      right: var(--spacing);
+      padding: 8px 12px;
+      background: rgba(0,0,0,0.5);
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      z-index: 100;
+      transition: background 0.3s;
+    }
+    button#mode-toggle:hover { background: rgba(0,0,0,0.7); }
+    .map-container { display: none; }
+    .map-container.active { display: grid; grid-template-columns: 1fr 240px; gap: var(--spacing); align-items: start; }
+    @media (max-width:768px){ .map-container.active{ grid-template-columns:1fr; } }
+    .map { width:65%; height:auto; margin: 0 auto; border: 8px dashed #fff; border-radius:16px; overflow:hidden; box-shadow: inset 0 0 30px rgba(255,255,255,0.6); background:#000; }
+    .map-image { width:100%; height:auto; display:block; filter: brightness(1.1) saturate(1.5); }
+    .info { background: linear-gradient(135deg, var(--d-info1), var(--d-info2)); padding:var(--spacing); border-radius:16px; box-shadow:0 0 15px rgba(0,0,0,0.6); color:#fff; transition: background 0.5s; }
+    body.theme-extreme .info { background: linear-gradient(135deg, var(--e-info1), var(--e-info2)); color: #000; }
+    .info h2 { margin-top:0; font-size:1.4rem; }
+    .info ul { list-style: disc inside; padding:0; margin:0; }
+    .info li { margin-bottom:.5rem; }
   </style>
 </head>
 <body>
+  <button id="mode-toggle">Przełącz tryb</button>
   <div class="container">
     <nav class="tabs">
       <button class="tab active" data-map="map1">Mapa 1</button>
@@ -107,7 +103,6 @@
       <button class="tab" data-map="map5">Mapa 5</button>
       <button class="tab" data-map="map6">Mapa 6</button>
     </nav>
-    <!-- Sekcje map -->
     <section id="map1" class="map-container active">
       <div class="map"><img src="gora_sohan.jpg" alt="Góra Sohan" class="map-image"></div>
       <aside class="info"><h2>Góra Sohan</h2><ul><li>Informacje o mapie Góra Sohan</li></ul></aside>
@@ -143,6 +138,10 @@
         tab.classList.add('active');
         document.getElementById(tab.dataset.map).classList.add('active');
       });
+    });
+    const toggle = document.getElementById('mode-toggle');
+    toggle.addEventListener('click', () => {
+      document.body.classList.toggle('theme-extreme');
     });
   </script>
 </body>
