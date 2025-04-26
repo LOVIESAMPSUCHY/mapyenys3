@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PIETRUCHADRUGZ</title>
+  <title>Pietruchadrugz</title>
   <style>
     :root {
       --spacing: 16px;
@@ -23,14 +23,17 @@
       --e-tab2: #00ffff;
       --e-info1: #00ff99;
       --e-info2: #ff9900;
+      /* Animacje */
+      --transition-fast: 0.2s ease-in-out;
+      --transition-medium: 0.5s ease;
     }
     *, *::before, *::after { box-sizing: border-box; }
     body {
       margin: 0;
       font-family: 'Comic Sans MS', cursive, sans-serif;
-      background: linear-gradient(135deg, var(--d-bg1), var(--d-bg2));
       color: #fff;
-      transition: background 0.5s ease;
+      background: linear-gradient(135deg, var(--d-bg1), var(--d-bg2));
+      transition: background var(--transition-medium);
     }
     body.theme-extreme {
       background: radial-gradient(circle at center, var(--e-bg1), var(--e-bg2), var(--e-bg3), var(--e-bg4));
@@ -38,105 +41,163 @@
       color: #000;
     }
     @keyframes swirl {
-      0% { filter: hue-rotate(0deg); }
+      0%,100% { filter: hue-rotate(0deg); }
       50% { filter: hue-rotate(180deg); }
-      100% { filter: hue-rotate(360deg); }
     }
-    .container { padding: var(--spacing); }
-    nav.tabs {
+    header, footer { text-align: center; padding: var(--spacing); }
+    header h1 { margin: 0; font-size: 2rem; }
+    footer p { margin: 0; font-size: 0.9rem; opacity: 0.7; }
+    .container {
       display: flex;
+      flex-wrap: nowrap;
+      padding: var(--spacing);
       gap: var(--spacing);
-      justify-content: center;
+    }
+    nav {
+      flex: 0 0 200px;
+      background: rgba(0,0,0,0.3);
+      border-radius: 8px;
+      padding: var(--spacing);
+      height: calc(100vh - 2*var(--spacing) - 120px);
+      overflow-y: auto;
+    }
+    nav h2 { margin-top: 0; font-size: 1.2rem; }
+    nav select, nav input[type="search"] {
+      width: 100%;
+      padding: 6px;
+      margin-bottom: var(--spacing);
+      border-radius: 4px;
+      border: none;
+    }
+    nav ul { list-style: none; padding: 0; margin: 0; }
+    nav li { margin: 8px 0; }
+    nav button.tab {
+      width: 100%;
+      text-align: left;
+      border: 2px solid var(--d-tab1);
+      margin: 4px 0;
+      transition: all var(--transition-fast);
+    }
+    body.theme-extreme nav button.tab {
+      border-color: var(--e-tab1);
+      background: linear-gradient(45deg, var(--e-tab1), var(--e-tab2));
+      color: #000;
+    }
+    nav button.tab.active { background: rgba(255,255,255,0.2); }
+    main {
+      flex: 1;
+      overflow: auto;
+    }
+    .toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       margin-bottom: var(--spacing);
     }
-    .tab {
-      padding: 12px 24px;
-      border: 3px solid;
-      border-radius: 30px;
-      background: linear-gradient(45deg, var(--d-tab1), var(--d-tab2));
-      color: #fff;
-      font-weight: bold;
-      cursor: pointer;
-      transition: all .3s ease;
-    }
-    .tab.active { box-shadow: 0 0 10px rgba(0,0,0,0.5); }
-    body.theme-extreme .tab {
-      background: linear-gradient(45deg, var(--e-tab1), var(--e-tab2));
-      border-color: var(--e-tab1);
-      color: #000;
-      text-shadow: 0 0 5px #fff;
-    }
     button#mode-toggle {
-      position: fixed;
-      top: var(--spacing);
-      right: var(--spacing);
       padding: 8px 12px;
       background: rgba(0,0,0,0.5);
       color: #fff;
       border: none;
       border-radius: 4px;
       cursor: pointer;
-      z-index: 100;
-      transition: background 0.3s;
+      transition: background var(--transition-fast);
     }
     button#mode-toggle:hover { background: rgba(0,0,0,0.7); }
-    .map-container { display: none; }
-    .map-container.active { display: grid; grid-template-columns: 1fr 240px; gap: var(--spacing); align-items: start; }
-    @media (max-width:768px){ .map-container.active{ grid-template-columns:1fr; } }
-    .map { width:65%; height:auto; margin: 0 auto; border: 8px dashed #fff; border-radius:16px; overflow:hidden; box-shadow: inset 0 0 30px rgba(255,255,255,0.6); background:#000; }
+    .map-container { display: none; animation: fadeIn 0.5s ease; }
+    .map-container.active { display: grid; grid-template-columns: 1fr 300px; gap: var(--spacing); align-items: start; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @media (max-width:768px) { .container { flex-direction: column; } nav { height: auto; } .map-container.active{ grid-template-columns:1fr; } }
+    .map {
+      position: relative;
+      width: 100%;
+      max-width: 800px;
+      margin: 0 auto;
+      border: 4px solid #fff;
+      border-radius:16px;
+      overflow:hidden;
+      background:#000;
+      transition: box-shadow var(--transition-fast);
+    }
+    .map:hover { box-shadow: 0 0 20px rgba(255,255,255,0.8); }
     .map-image { width:100%; height:auto; display:block; filter: brightness(1.1) saturate(1.5); }
-    .info { background: linear-gradient(135deg, var(--d-info1), var(--d-info2)); padding:var(--spacing); border-radius:16px; box-shadow:0 0 15px rgba(0,0,0,0.6); color:#fff; transition: background 0.5s; }
-    body.theme-extreme .info { background: linear-gradient(135deg, var(--e-info1), var(--e-info2)); color: #000; }
-    .info h2 { margin-top:0; font-size:1.4rem; }
+    .info { background: linear-gradient(135deg, var(--d-info1), var(--d-info2)); padding:var(--spacing); border-radius:16px; color:#fff; transition: background var(--transition-medium); }
+    body.theme-extreme .info { background: linear-gradient(135deg, var(--e-info1), var(--e-info2)); color:#000; }
+    .info h2 { margin-top:0; font-size:1.5rem; }
     .info ul { list-style: disc inside; padding:0; margin:0; }
-    .info li { margin-bottom:.5rem; }
+    .info li { margin-bottom:0.75rem; }
   </style>
 </head>
 <body>
+  <header>
+    <h1>BYCIEPLYPAPIEZDRUGZ</h1>
+  </header>
   <button id="mode-toggle">Przełącz tryb</button>
   <div class="container">
-    <nav class="tabs">
-      <button class="tab active" data-map="map1">Mapa 1</button>
-      <button class="tab" data-map="map2">Mapa 2</button>
-      <button class="tab" data-map="map3">Mapa 3</button>
-      <button class="tab" data-map="map4">Mapa 4</button>
-      <button class="tab" data-map="map5">Mapa 5</button>
-      <button class="tab" data-map="map6">Mapa 6</button>
+    <nav>
+      <h2>Wybierz Mapę</h2>
+      <input type="search" id="map-search" placeholder="Szukaj mapy…">
+      <ul id="map-list">
+        <li><button class="tab active" data-map="map1">Góra Sohan</button></li>
+        <li><button class="tab" data-map="map2">Las Duchów</button></li>
+        <li><button class="tab" data-map="map3">M2 Sippar</button></li>
+        <li><button class="tab" data-map="map4">Nefrytowa Zatoka</button></li>
+        <li><button class="tab" data-map="map5">Pustynia Yongbi</button></li>
+        <li><button class="tab" data-map="map6">Świątynia Hwang</button></li>
+      </ul>
     </nav>
-    <section id="map1" class="map-container active">
-      <div class="map"><img src="gora_sohan.jpg" alt="Góra Sohan" class="map-image"></div>
-      <aside class="info"><h2>Góra Sohan</h2><ul><li>Informacje o mapie Góra Sohan</li></ul></aside>
-    </section>
-    <section id="map2" class="map-container">
-      <div class="map"><img src="las_duchow.jpg" alt="Las Duchów" class="map-image"></div>
-      <aside class="info"><h2>Las Duchów</h2><ul><li>Informacje o mapie Las Duchów</li></ul></aside>
-    </section>
-    <section id="map3" class="map-container">
-      <div class="map"><img src="m2_sippar.jpg" alt="M2 Sippar" class="map-image"></div>
-      <aside class="info"><h2>M2 Sippar</h2><ul><li>Informacje o mapie M2 Sippar</li></ul></aside>
-    </section>
-    <section id="map4" class="map-container">
-      <div class="map"><img src="nefrytowa_zatoka.jpg" alt="Nefrytowa Zatoka" class="map-image"></div>
-      <aside class="info"><h2>Nefrytowa Zatoka</h2><ul><li>Informacje o mapie Nefrytowa Zatoka</li></ul></aside>
-    </section>
-    <section id="map5" class="map-container">
-      <div class="map"><img src="pustynia_yongbi.jpg" alt="Pustynia Yongbi" class="map-image"></div>
-      <aside class="info"><h2>Pustynia Yongbi</h2><ul><li>Informacje o mapie Pustynia Yongbi</li></ul></aside>
-    </section>
-    <section id="map6" class="map-container">
-      <div class="map"><img src="swiatynia_hwang.jpg" alt="Świątynia Hwang" class="map-image"></div>
-      <aside class="info"><h2>Świątynia Hwang</h2><ul><li>Informacje o mapie Świątynia Hwang</li></ul></aside>
-    </section>
+    <main>
+      <div class="toolbar">
+        <h2 id="map-title">Góra Sohan</h2>
+      </div>
+      <section id="map1" class="map-container active">
+        <div class="map"><img src="gora_sohan.jpg" alt="Góra Sohan" class="map-image"></div>
+        <aside class="info"><h2>Informacje</h2><ul><li>Respawn Veon: 1h</li><li>Metin Pung-Ma: 10m</li><li>Metin Ma-An: 10m</li></ul></aside>
+      </section>
+      <section id="map2" class="map-container">
+        <div class="map"><img src="las_duchow.jpg" alt="Las Duchów" class="map-image"></div>
+        <aside class="info"><h2>Informacje</h2><ul><li>Best Kapitan: 30m</li><li>Metin Zazdrości: 5m</li><li>Metin Ciemności: 5m</li></ul></aside>
+      </section>
+      <section id="map3" class="map-container">
+        <div class="map"><img src="m2_sippar.jpg" alt="M2 Sippar" class="map-image"></div>
+        <aside class="info"><h2>Informacje</h2><ul><li>Tryton: 6h</li><li>General Lobster: 1h</li><li>Metin Przódków: 15m</li></ul></aside>
+      </section>
+      <section id="map4" class="map-container">
+        <div class="map"><img src="nefrytowa_zatoka.jpg" alt="Nefrytowa Zatoka" class="map-image"></div>
+        <aside class="info"><h2>Informacje</h2><ul><li>Dziewięć Ogonów: 1h</li><li>Metin Twardości: 5m</li><li>Metin Śmierci: 10m</li></ul></aside>
+      </section>
+      <section id="map5" class="map-container">
+        <div class="map"><img src="pustynia_yongbi.jpg" alt="Pustynia Yongbi" class="map-image"></div>
+        <aside class="info"><h2>Informacje</h2><ul><li>Olbrz. Żółw: 1h</li><li>Metin Twardości: 5m</li><li>Metin Cienia: 5m</li></ul></aside>
+      </section>
+      <section id="map6" class="map-container">
+        <div class="map"><img src="swiatynia_hwang.jpg" alt="Świątynia Hwang" class="map-image"></div>
+        <aside class="info"><h2>Informacje</h2><ul><li>Zjawa: 1h</li><li>Ezot: 30m</li><li>Metin Upadku: 10m</li><li>Metin Diabła: 10m</li></ul></aside>
+      </section>
+    </main>
   </div>
+  <footer>
+    <p>© 2025 CIEPLYPAPIEZ DRUGZ TU NIE MA PRAW TU JEST JAZDA</p>
+  </footer>
   <script>
-    const tabs = document.querySelectorAll('.tab');
+    const tabs = document.querySelectorAll('nav button.tab');
     const maps = document.querySelectorAll('.map-container');
+    const mapTitle = document.getElementById('map-title');
     tabs.forEach(tab => {
       tab.addEventListener('click', () => {
         tabs.forEach(t => t.classList.remove('active'));
         maps.forEach(m => m.classList.remove('active'));
         tab.classList.add('active');
-        document.getElementById(tab.dataset.map).classList.add('active');
+        const id = tab.dataset.map;
+        document.getElementById(id).classList.add('active');
+        mapTitle.textContent = tab.textContent;
+      });
+    });
+    document.getElementById('map-search').addEventListener('input', e => {
+      const term = e.target.value.toLowerCase();
+      tabs.forEach(tab => {
+        const text = tab.textContent.toLowerCase();
+        tab.parentElement.style.display = text.includes(term) ? '' : 'none';
       });
     });
     const toggle = document.getElementById('mode-toggle');
