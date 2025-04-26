@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pietruchadrugz</title>
+  <title>BYCIEPLYPAPIEZDRUGZ – Zaawansowane Mapy</title>
   <style>
     :root {
       --spacing: 16px;
@@ -14,7 +14,7 @@
       --d-tab2: #4b0082;
       --d-info1: #3d0050;
       --d-info2: #1a001f;
-      /* Ekstremalne, stymulujące kolory */
+      /* Ekstremalne kolory */
       --e-bg1: #ff0055;
       --e-bg2: #00ff11;
       --e-bg3: #11ddff;
@@ -47,80 +47,32 @@
     header, footer { text-align: center; padding: var(--spacing); }
     header h1 { margin: 0; font-size: 2rem; }
     footer p { margin: 0; font-size: 0.9rem; opacity: 0.7; }
-    .container {
-      display: flex;
-      flex-wrap: nowrap;
-      padding: var(--spacing);
-      gap: var(--spacing);
-    }
-    nav {
-      flex: 0 0 200px;
-      background: rgba(0,0,0,0.3);
-      border-radius: 8px;
-      padding: var(--spacing);
-      height: calc(100vh - 2*var(--spacing) - 120px);
-      overflow-y: auto;
-    }
+    .container { display: flex; flex-wrap: nowrap; padding: var(--spacing); gap: var(--spacing); }
+    nav { flex: 0 0 220px; background: rgba(0,0,0,0.35); border-radius: 8px; padding: var(--spacing); height: calc(100vh - 2*var(--spacing) - 120px); overflow-y: auto; }
     nav h2 { margin-top: 0; font-size: 1.2rem; }
-    nav select, nav input[type="search"] {
-      width: 100%;
-      padding: 6px;
-      margin-bottom: var(--spacing);
-      border-radius: 4px;
-      border: none;
-    }
-    nav ul { list-style: none; padding: 0; margin: 0; }
-    nav li { margin: 8px 0; }
-    nav button.tab {
-      width: 100%;
-      text-align: left;
-      border: 2px solid var(--d-tab1);
-      margin: 4px 0;
-      transition: all var(--transition-fast);
-    }
-    body.theme-extreme nav button.tab {
-      border-color: var(--e-tab1);
-      background: linear-gradient(45deg, var(--e-tab1), var(--e-tab2));
-      color: #000;
-    }
+    nav input[type="search"] { width: 100%; padding: 6px; margin-bottom: var(--spacing); border-radius: 4px; border: none; }
+    nav .legend { margin-top: var(--spacing); }
+    nav .legend h3 { margin-bottom: 8px; font-size: 1rem; }
+    nav .legend ul { list-style: none; padding: 0; margin: 0; }
+    nav .legend li { display: flex; align-items: center; margin-bottom: 6px; }
+    nav .legend span.icon { display: inline-block; width: 12px; height: 12px; margin-right: 8px; border-radius: 2px; }
+    nav ul#map-list { list-style: none; padding: 0; margin: 0; }
+    nav li { margin: 4px 0; }
+    nav button.tab { width: 100%; text-align: left; border: 2px solid var(--d-tab1); padding: 8px; border-radius: 4px; background: none; color: inherit; transition: all var(--transition-fast); }
+    body.theme-extreme nav button.tab { border-color: var(--e-tab1); background: linear-gradient(45deg, var(--e-tab1), var(--e-tab2)); color: #000; }
     nav button.tab.active { background: rgba(255,255,255,0.2); }
-    main {
-      flex: 1;
-      overflow: auto;
-    }
-    .toolbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: var(--spacing);
-    }
-    button#mode-toggle {
-      padding: 8px 12px;
-      background: rgba(0,0,0,0.5);
-      color: #fff;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      transition: background var(--transition-fast);
-    }
+    main { flex: 1; overflow: auto; }
+    .toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing); }
+    .toolbar input#zoom-slider { width: 200px; }
+    button#mode-toggle { padding: 8px 12px; background: rgba(0,0,0,0.5); color: #fff; border: none; border-radius: 4px; cursor: pointer; transition: background var(--transition-fast); }
     button#mode-toggle:hover { background: rgba(0,0,0,0.7); }
     .map-container { display: none; animation: fadeIn 0.5s ease; }
     .map-container.active { display: grid; grid-template-columns: 1fr 300px; gap: var(--spacing); align-items: start; }
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     @media (max-width:768px) { .container { flex-direction: column; } nav { height: auto; } .map-container.active{ grid-template-columns:1fr; } }
-    .map {
-      position: relative;
-      width: 100%;
-      max-width: 800px;
-      margin: 0 auto;
-      border: 4px solid #fff;
-      border-radius:16px;
-      overflow:hidden;
-      background:#000;
-      transition: box-shadow var(--transition-fast);
-    }
+    .map { position: relative; width: 100%; max-width: 800px; margin: 0 auto; border: 4px solid #fff; border-radius:16px; overflow:hidden; background:#000; transition: box-shadow var(--transition-fast), transform var(--transition-fast); }
     .map:hover { box-shadow: 0 0 20px rgba(255,255,255,0.8); }
-    .map-image { width:100%; height:auto; display:block; filter: brightness(1.1) saturate(1.5); }
+    .map-image { width:100%; height:auto; display:block; filter: brightness(1.1) saturate(1.5); transform-origin: center center; }
     .info { background: linear-gradient(135deg, var(--d-info1), var(--d-info2)); padding:var(--spacing); border-radius:16px; color:#fff; transition: background var(--transition-medium); }
     body.theme-extreme .info { background: linear-gradient(135deg, var(--e-info1), var(--e-info2)); color:#000; }
     .info h2 { margin-top:0; font-size:1.5rem; }
@@ -129,9 +81,7 @@
   </style>
 </head>
 <body>
-  <header>
-    <h1>BYCIEPLYPAPIEZDRUGZ</h1>
-  </header>
+  <header><h1>BYCIEPLYPAPIEZDRUGZ</h1></header>
   <button id="mode-toggle">Przełącz tryb</button>
   <div class="container">
     <nav>
@@ -145,10 +95,22 @@
         <li><button class="tab" data-map="map5">Pustynia Yongbi</button></li>
         <li><button class="tab" data-map="map6">Świątynia Hwang</button></li>
       </ul>
+      <div class="legend">
+        <h3>Legenda Punktów</h3>
+        <ul>
+          <li><span class="icon" style="background:#0f0;"></span>Respawn: 30m+</li>
+          <li><span class="icon" style="background:#ff0;"></span>Respawn: 10m–30m</li>
+          <li><span class="icon" style="background:#f00;"></span>Respawn: &lt;10m</li>
+        </ul>
+      </div>
     </nav>
     <main>
       <div class="toolbar">
         <h2 id="map-title">Góra Sohan</h2>
+        <div>
+          <label for="zoom-slider">Zoom:</label>
+          <input type="range" id="zoom-slider" min="0.5" max="2" step="0.1" value="1">
+        </div>
       </div>
       <section id="map1" class="map-container active">
         <div class="map"><img src="gora_sohan.jpg" alt="Góra Sohan" class="map-image"></div>
@@ -176,13 +138,12 @@
       </section>
     </main>
   </div>
-  <footer>
-    <p>© 2025 CIEPLYPAPIEZ DRUGZ TU NIE MA PRAW TU JEST JAZDA</p>
-  </footer>
+  <footer><p>© 2025 CIEPLYPAPIEZ DRUGZ TU NIE MA PRAW TU JEST JAZDA</p></footer>
   <script>
     const tabs = document.querySelectorAll('nav button.tab');
     const maps = document.querySelectorAll('.map-container');
     const mapTitle = document.getElementById('map-title');
+    const zoomSlider = document.getElementById('zoom-slider');
     tabs.forEach(tab => {
       tab.addEventListener('click', () => {
         tabs.forEach(t => t.classList.remove('active'));
@@ -191,6 +152,8 @@
         const id = tab.dataset.map;
         document.getElementById(id).classList.add('active');
         mapTitle.textContent = tab.textContent;
+        zoomSlider.value = 1;
+        resetZoom(id);
       });
     });
     document.getElementById('map-search').addEventListener('input', e => {
@@ -204,6 +167,15 @@
     toggle.addEventListener('click', () => {
       document.body.classList.toggle('theme-extreme');
     });
+    zoomSlider.addEventListener('input', e => {
+      const scale = e.target.value;
+      const activeMap = document.querySelector('.map-container.active .map-image');
+      activeMap.style.transform = `scale(${scale})`;
+    });
+    function resetZoom(id) {
+      const img = document.querySelector(`#${id} .map-image`);
+      if (img) img.style.transform = 'scale(1)';
+    }
   </script>
 </body>
 </html>
